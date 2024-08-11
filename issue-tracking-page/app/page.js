@@ -22,13 +22,32 @@ const HomePage = () => {
     fetchIssues();
   }, []);
 
-  const handleAddIssue = (issue) => {
-    setIssues([...issues, issue]);
+  const handleAddIssue = async (issue) => {
+    try {
+      const response = await axios.post('/api/issues', issue);
+      setIssues([...issues, response.data]);
+    } catch (error) {
+      console.error('Error adding issue', error);
+    }
   };
 
-  const handleUpdateIssue = (updatedIssue) => {
-    setIssues(issues.map(issue => issue.id === updatedIssue.id ? updatedIssue : issue));
-    setCurrentIssue(null);
+  const handleUpdateIssue = async (updatedIssue) => {
+    try {
+      await axios.put(`/api/issues/${updatedIssue.id}`, updatedIssue);
+      setIssues(issues.map(issue => issue.id === updatedIssue.id ? updatedIssue : issue));
+      setCurrentIssue(null);
+    } catch (error) {
+      console.error('Error updating issue', error);
+    }
+  };
+
+  const handleDeleteIssue = async (id) => {
+    try {
+      await axios.delete(`/api/issues/${id}`);
+      setIssues(issues.filter(issue => issue.id !== id));
+    } catch (error) {
+      console.error('Error deleting issue', error);
+    }
   };
 
   return (
@@ -45,6 +64,7 @@ const HomePage = () => {
             key={issue.id}
             issue={issue}
             onEdit={() => setCurrentIssue(issue)}
+            onDelete={() => handleDeleteIssue(issue.id)}
           />
         ))}
       </div>
