@@ -20,6 +20,4 @@ spring:
 
 logging:
   level:
-    root: INFO
-    com:
-      example: DEBUG
+    org.springframework: DEBUG
